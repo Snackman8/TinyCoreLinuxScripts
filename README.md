@@ -7,10 +7,10 @@ A collection of scripts to automate some of the common tasks when setting up a n
 
 tc_install_openssh.sh - Automatically install and start the openssh server
 
-In order to download these scripts to a fresh install of Tiny Core Linux 11.1, the wget must first be upgraded because the stock wget command does not support https
+In order to download these scripts to a fresh install of Tiny Core Linux 10.1 or 11.1, the wget must first be upgraded because the stock wget command does not support https
 
 ```
-# update wget extension on Tiny Core Linux 11.1
+# update wget extension on Tiny Core Linux 10.1 or 11.1
 tce-load -wi wget
 
 # download the tc_install_ioenssh.sh script
