@@ -4,7 +4,7 @@
 #
 # tc_install_openssh.sh
 #
-# Simple automated script to install openssh server on a fresh Tiny Core Linux 11.1
+# Simple automated script to install openssh server on a fresh Tiny Core Linux 10.1 or 11.1
 # installation.
 #
 # Usage: tc_install_openssh.sh PASSWD
@@ -21,7 +21,7 @@
 # Check to make sure password was passed in
 if [ $# -eq 0 ]; then
 	echo ""
-	echo "This script installs an openssh server for Tiny Core Linux 11.1"
+	echo "This script installs an openssh server for Tiny Core Linux 10.1 or 11.1"
 	echo ""
 	echo "Usage: tc_install_openssh.sh PASSWORD"
 	echo ""
