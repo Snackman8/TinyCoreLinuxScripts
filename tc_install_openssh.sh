@@ -74,18 +74,18 @@ echo ""
 # update Tiny Core configuration files
 echo "Updating Tiny Core Configuration Files"
 echo "--------------------------------------"
-if grep -xq "/usr/local/etc/ssh" /opt/.filetool.lst; then
-	echo "/usr/local/etc/ssh already exists in /opt/.filetool.lst (skipping)"
+if grep -xq "usr/local/etc/ssh" /opt/.filetool.lst; then
+	echo "usr/local/etc/ssh already exists in /opt/.filetool.lst (skipping)"
 else
-	echo '/usr/local/etc/ssh' >> /opt/.filetool.lst
+	echo 'usr/local/etc/ssh' >> /opt/.filetool.lst
 	echo "wrote /usr/local/etc/ssh into /opt/.filetool.lst"
 fi
 
-if grep -xq "/etc/shadow" /opt/.filetool.lst; then
-        echo "/etc/shadow already exists in /opt/.filetool.lst (skipping)"
+if grep -xq "etc/shadow" /opt/.filetool.lst; then
+        echo "etc/shadow already exists in /opt/.filetool.lst (skipping)"
 else
-        echo '/etc/shadow' >> /opt/.filetool.lst
-        echo "wrote /etc/shadow into /opt/.filetool.lst"
+        echo 'etc/shadow' >> /opt/.filetool.lst
+        echo "wrote etc/shadow into /opt/.filetool.lst"
 fi
 
 if grep -xq "/usr/local/etc/init.d/openssh start &" /opt/bootlocal.sh; then
