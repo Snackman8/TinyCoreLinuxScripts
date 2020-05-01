@@ -87,10 +87,10 @@ else
         echo "wrote openvpn startup into /opt/bootlocal.sh"
 fi
 
-if grep -xq "ssh -o StrictHostKeyChecking=no -f -N -D 0.0.0.0:$2 -i /home/tc/.ssh/id_rsa_openvpn tc@localhost" /opt/bootlocal.sh; then
+if grep -xq "sleep 3 && ssh -o StrictHostKeyChecking=no -f -N -D 0.0.0.0:$2 -i /home/tc/.ssh/id_rsa_openvpn tc@localhost" /opt/bootlocal.sh; then
         echo "proxy startup already exists in /opt/bootlocal.sh (skipping)"
 else
-        echo "ssh -o StrictHostKeyChecking=no -f -N -D 0.0.0.0:$2 -i /home/tc/.ssh/id_rsa_openvpn tc@localhost" | sudo tee -a /opt/bootlocal.sh
+        echo "sleep 3 && ssh -o StrictHostKeyChecking=no -f -N -D 0.0.0.0:$2 -i /home/tc/.ssh/id_rsa_openvpn tc@localhost" | sudo tee -a /opt/bootlocal.sh
         echo "wrote proxy startup into /opt/bootlocal.sh"
 fi
 filetool.sh -b
