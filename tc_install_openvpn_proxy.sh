@@ -67,7 +67,6 @@ else
 	cat ~/.ssh/id_rsa_openvpn.pub >> ~/.ssh/authorized_keys
 	echo "Copied RSA key to authorized_keys"
 fi;
-ssh -i /home/tc/.ssh/id_rsa_openvpn -o StrictHostKeyChecking=no tc@localhost "echo known hosts updated"
 echo ""
 
 # show the IP address
@@ -88,10 +87,10 @@ else
         echo "wrote openvpn startup into /opt/bootlocal.sh"
 fi
 
-if grep -xq "ssh -f -N -D 0.0.0.0:$2 -i /home/tc/.ssh/id_rsa_openvpn tc@localhost" /opt/bootlocal.sh; then
+if grep -xq "ssh -o StrictHostKeyChecking=no -f -N -D 0.0.0.0:$2 -i /home/tc/.ssh/id_rsa_openvpn tc@localhost" /opt/bootlocal.sh; then
         echo "proxy startup already exists in /opt/bootlocal.sh (skipping)"
 else
-        echo "ssh -f -N -D 0.0.0.0:$2 -i /home/tc/.ssh/id_rsa_openvpn tc@localhost" | sudo tee -a /opt/bootlocal.sh
+        echo "ssh -o StrictHostKeyChecking=no -f -N -D 0.0.0.0:$2 -i /home/tc/.ssh/id_rsa_openvpn tc@localhost" | sudo tee -a /opt/bootlocal.sh
         echo "wrote proxy startup into /opt/bootlocal.sh"
 fi
 filetool.sh -b
