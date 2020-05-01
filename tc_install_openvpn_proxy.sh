@@ -18,8 +18,8 @@
 #
 # **************************************************
 
-# Check to make sure password was passed in
-if [ $# -eq 0 ]; then
+# Check to make sure config file and port were passed in
+if [ $# -ne 2 ]; then
 	echo ""
 	echo "This script installs an openvpn proxy server for Tiny Core Linux 10.1 or 11.1"
 	echo ""
