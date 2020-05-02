@@ -1,0 +1,269 @@
+#!/bin/sh
+#
+######################################################
+# Build script for Core 10                          #
+#                                                    #
+# See .info for details                              #
+######################################################
+
+######################################################
+# Prepare extension creation                         #
+######################################################
+# download and install python
+tce-load -wi python.tcz
+# download and install other python dependencies
+tce-load -wi python-pip.tcz
+tce-load -wi python-dev.tcz
+tce-load -wi libffi-dev.tcz
+# download and install other dependencies
+# download and install the compile tools
+tce-load -wi compiletc.tcz
+tce-load -wi squashfs-tools.tcz
+
+######################################################
+# Configure extension creation parameters            #
+######################################################
+# Variables
+TODAY=`date +%Y/%m/%d`
+PACKAGE="octoprint"
+VERSION="1.4.0"
+DESCRIPTION="OctoPrint provides a snappy web interface for controlling consumer 3D printers"
+AUTHORS="OctoPrint"
+HOMEPAGE="https://github.com/OctoPrint/OctoPrint"
+LICENSE="GNU Affero General Public License V3"
+ME="lyu"
+TAGS="octoprint 3d printer"
+DESTDIR=/tmp/dest/${PACKAGE}
+TMPDIR=/tmp/submit/${PACKAGE}
+DOWNLOAD="https://github.com/OctoPrint/OctoPrint/archive/$VERSION.tar.gz"
+
+# Workdir
+sudo rm -r /tmp/${PACKAGE} 2>/dev/null
+mkdir /tmp/${PACKAGE}
+cd /tmp/${PACKAGE}
+
+# Source
+wget $DOWNLOAD -O OctoPrint-$VERSION.tar.gz
+tar xf /tmp/${PACKAGE}/OctoPrint-${VERSION}.tar.gz
+cd /tmp/${PACKAGE}/OctoPrint-${VERSION}
+
+######################################################
+# Compile extension                                  #
+######################################################
+sudo pip install .
+cd /usr/local/lib/python2.7/site-packages/
+sudo rm -r ${TMPDIR}* 2>/dev/null
+mkdir -p ${TMPDIR}/usr/local/bin
+mkdir -p ${TMPDIR}/usr/local/lib/python2.7/site-packages
+mkdir -p ${TMPDIR}/usr/local/tce.installed
+
+# copy the octoprint bits
+cp -r /usr/local/bin/octoprint ${TMPDIR}/usr/local/bin/
+cp -r /usr/local/lib/python2.7/site-packages/octoprint ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/octoprint_client ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/octoprint_setuptools ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/OctoPrint-1.4.0-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+
+# copy all the dependency bits that we don't have extensions for yet
+cp -r /usr/local/lib/python2.7/site-packages/Babel-2.8.0.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/Flask-0.12.5.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/Flask_Assets-0.12-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/Flask_Babel-0.12.2-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/Flask_Login-0.4.1-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/Jinja2-2.8.1.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/Markdown-3.1.1.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/MarkupSafe-1.1.1.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/OctoPrint-1.4.0-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/PyYAML-5.3.1-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/Unidecode-0.04.21.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/Werkzeug-0.16.1.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/_dummy_thread ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/_markupbase ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/_scandir.so ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/_thread ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/argh-0.26.2.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/argh ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/awesome_slugify-1.6.5-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/babel ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/backports_abc-0.5.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/backports_abc.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/backports_abc.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/blinker-1.4-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/blinker ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/builtins ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/cachelib-0.1-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/cachelib ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/certifi-2020.4.5.1.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/certifi ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/chainmap-1.0.3-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/chainmap ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/chardet-3.0.4.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/chardet ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/click-7.1.2.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/click ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/concurrent ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/copyreg ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/emoji-0.5.4-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/emoji ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/examples ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/feedparser-5.2.1-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/feedparser.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/feedparser.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/filetype-1.0.7.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/filetype ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/flask ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/flask_assets.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/flask_assets.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/flask_babel ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/flask_login ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/frozendict-1.2-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/frozendict ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/future-0.18.2-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/future ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/futures-3.3.0.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/html ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/http ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/idna-2.9.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/idna ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/itsdangerous-1.1.0.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/itsdangerous ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/jinja2 ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/libfuturize ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/libpasteurize ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/markdown ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/markupsafe ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/monotonic-1.5.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/monotonic.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/monotonic.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/netaddr-0.7.19.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/netaddr ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/netifaces-0.10.9.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/netifaces.so ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/past ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pathtools-0.1.2-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pathtools ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pkginfo-1.5.0.1.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pkginfo ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/psutil-5.6.7-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/psutil ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pyasn1-0.4.8.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pyasn1 ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pylru-1.2.0-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pylru.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pylru.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pyserial-3.4.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pytz-2020.1.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/pytz ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/queue ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/regex-2020.4.4-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/regex ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/reprlib ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/requests-2.23.0.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/requests ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/rsa-4.0.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/rsa ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/sarge-0.1.5.post0-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/sarge ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/scandir-1.10.0-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/scandir.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/scandir.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/semantic_version-2.8.5.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/semantic_version ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/sentry_sdk-0.13.2.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/sentry_sdk ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/serial ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/singledispatch-3.4.0.3.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/singledispatch.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/singledispatch.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/singledispatch_helpers.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/singledispatch_helpers.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/six-1.14.0.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/six.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/six.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/slugify ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/socketserver ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/tkinter ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/tornado-4.5.3-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/tornado ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/typing-3.7.4.1.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/typing.py ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/typing.pyc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/unidecode ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/urllib3-1.25.9.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/urllib3 ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/watchdog-0.9.0-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/watchdog ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/webassets-2.0-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/webassets ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/websocket ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/websocket_client-0.56.0.dist-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/werkzeug ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/winreg ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/wrapt-1.11.2-py2.7.egg-info ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/wrapt ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/xmlrpc ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+cp -r /usr/local/lib/python2.7/site-packages/yaml ${TMPDIR}/usr/local/lib/python2.7/site-packages/
+
+
+###################################################
+# Create info file                                #
+###################################################
+cd /tmp/submit/
+cat <<EOF> ${PACKAGE}.tcz.info
+Title:          ${PACKAGE}.tcz
+Description:    ${DESCRIPTION}
+Version:        ${VERSION}
+Author:         ${AUTHORS}
+Original-site:  ${HOMEPAGE}
+Copying-policy: ${LICENSE}
+Size:           ${size}
+Extension_by:   ${ME}
+Tags:           ${TAGS}
+Comments:       OctoPrint provides a snappy web interface for controlling consumer 3D printers
+                
+Change-log:     ${TODAY} first verion, ${VERSION}
+Current:        ${TODAY} first verion, ${VERSION}
+EOF
+
+###################################################
+# Create .dep file                                #
+###################################################
+cat <<EOF> ${PACKAGE}.tcz.dep
+libffi.tcz
+python-pip.tcz
+EOF
+
+###################################################
+# Create install script file                      #
+###################################################
+cat <<EOF> $TMPDIR/usr/local/tce.installed/${PACKAGE}
+#!/bin/sh
+EOF
+
+find $TMPDIR/ -type d | xargs chmod -v 755;
+
+cd $TMPDIR
+find $TMPDIR -perm 777 -exec chmod 755 {} \;
+find $TMPDIR -perm 555 -exec chmod 755 {} \;
+find $TMPDIR -perm 444 -exec chmod 644 {} \;
+find $TMPDIR -perm 666 -exec chmod 644 {} \;
+find $TMPDIR -perm 664 -exec chmod 644 {} \;
+sudo chown -R root:root $TMPDIR
+sudo chown -R root:staff $TMPDIR/usr/local/tce.installed
+sudo chmod -R 775 $TMPDIR/usr/local/tce.installed
+
+cd /tmp/submit/
+
+mksquashfs $TMPDIR ${PACKAGE}.tcz
+
+cd $TMPDIR
+sudo sh -c "find usr -not -type d > ${PACKAGE}.tcz.list"
+sudo mv ../${PACKAGE}.tcz .
+sudo mv ../${PACKAGE}.tcz.dep .
+sudo mv ../${PACKAGE}.tcz.info .
+
+# Create md5 file
+sudo sh -c "md5sum ${PACKAGE}.tcz > ${PACKAGE}.tcz.md5.txt"
+
+# Cleanup temp directory
+sudo rm -r -f usr
