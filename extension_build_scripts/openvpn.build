@@ -1,0 +1,138 @@
+#!/bin/sh
+#
+######################################################
+# Build script for Core 11.x                         #
+#                                                    #
+# See .info for details                              #
+######################################################
+
+######################################################
+# Prepare extension creation                         #
+######################################################
+# download packages needed to compile
+tce-load -wi autoconf
+tce-load -wi automake
+tce-load -wi compiletc
+tce-load -wi libtool-dev
+tce-load -wi lzo-dev
+tce-load -wi Linux-PAM-dev.tcz
+tce-load -wi openssl-1.1.1-dev.tcz
+tce-load -wi squashfs-tools.tcz
+tce-load -wi tree.tcz
+
+######################################################
+# Configure extension creation parameters            #
+######################################################
+# Variables
+TODAY=`date +%Y/%m/%d`
+PACKAGE="openvpn"
+VERSION="2.4.9"
+DESCRIPTION="A Secure tunneling daemon"
+AUTHORS="OpenVPN"
+HOMEPAGE="https://github.com/OpenVPN/openvpn"
+LICENSE="GPL license version 2"
+ME="snackman8"
+TAGS="openvpn vpn"
+DESTDIR=/tmp/dest/${PACKAGE}
+TMPDIR=/tmp/submit/${PACKAGE}
+DOWNLOAD="https://github.com/OpenVPN/openvpn/archive/v$VERSION.tar.gz"
+
+# Workdir
+sudo rm -r /tmp/${PACKAGE} 2>/dev/null
+mkdir /tmp/${PACKAGE}
+cd /tmp/${PACKAGE}
+
+# Source
+wget $DOWNLOAD -O $PACKAGE-$VERSION.tar.gz
+tar xf /tmp/${PACKAGE}/$PACKAGE-${VERSION}.tar.gz
+cd /tmp/${PACKAGE}/$PACKAGE-${VERSION}
+
+######################################################
+# Compile extension                                  #
+######################################################
+autoreconf -i
+./configure
+make -j3
+tree -ifx / > /tmp/${PACKAGE}/files_before_install.txt
+sudo make install
+tree -ifx / > /tmp/${PACKAGE}/files_after_install.txt
+sudo rm -r ${TMPDIR}* 2>/dev/null
+
+######################################################
+# Copy Installed Files                               #
+######################################################
+mkdir -p ${TMPDIR}/usr/local/include/
+mkdir -p ${TMPDIR}/usr/local/lib/
+mkdir -p ${TMPDIR}/usr/local/sbin/
+mkdir -p ${TMPDIR}/usr/local/share/doc
+mkdir -p ${TMPDIR}/usr/local/share/man/man8/
+cp -r /usr/local/include/openvpn-msg.h ${TMPDIR}/usr/local/include/
+cp -r /usr/local/include/openvpn-plugin.h ${TMPDIR}/usr/local/include/
+cp -r /usr/local/lib/openvpn ${TMPDIR}/usr/local/lib/
+cp -r /usr/local/sbin/openvpn ${TMPDIR}/usr/local/sbin/
+cp -r /usr/local/share/doc/openvpn ${TMPDIR}/usr/local/share/doc/
+cp -r /usr/local/share/man/man8/openvpn.8 ${TMPDIR}/usr/local/share/man/man8/
+
+###################################################
+# Create info file                                #
+###################################################
+cd /tmp/submit/
+cat <<EOF> ${PACKAGE}.tcz.info
+Title:          ${PACKAGE}.tcz
+Description:    ${DESCRIPTION}
+Version:        ${VERSION}
+Author:         ${AUTHORS}
+Original-site:  ${HOMEPAGE}
+Copying-policy: ${LICENSE}
+Size:           ${size}
+Extension_by:   ${ME}
+Tags:           ${TAGS}
+Comments:       ${PACKAGE} - ${DESCRIPTION}
+                
+Change-log:     ${TODAY} first verion, ${VERSION}
+Current:        ${TODAY} first verion, ${VERSION}
+EOF
+
+###################################################
+# Create .dep file                                #
+###################################################
+cat <<EOF> ${PACKAGE}.tcz.dep
+lzo.tcz
+Linux-PAM.tcz
+openssl-1.1.1.tcz
+EOF
+
+###################################################
+# Create install script file                      #
+###################################################
+cat <<EOF> $TMPDIR/usr/local/tce.installed/${PACKAGE}
+#!/bin/sh
+EOF
+
+find $TMPDIR/ -type d | xargs chmod -v 755;
+
+cd $TMPDIR
+find $TMPDIR -perm 777 -exec chmod 755 {} \;
+find $TMPDIR -perm 555 -exec chmod 755 {} \;
+find $TMPDIR -perm 444 -exec chmod 644 {} \;
+find $TMPDIR -perm 666 -exec chmod 644 {} \;
+find $TMPDIR -perm 664 -exec chmod 644 {} \;
+sudo chown -R root:root $TMPDIR
+sudo chown -R root:staff $TMPDIR/usr/local/tce.installed
+sudo chmod -R 775 $TMPDIR/usr/local/tce.installed
+
+cd /tmp/submit/
+
+mksquashfs $TMPDIR ${PACKAGE}.tcz
+
+cd $TMPDIR
+sudo sh -c "find usr -not -type d > ${PACKAGE}.tcz.list"
+sudo mv ../${PACKAGE}.tcz .
+sudo mv ../${PACKAGE}.tcz.dep .
+sudo mv ../${PACKAGE}.tcz.info .
+
+# Create md5 file
+sudo sh -c "md5sum ${PACKAGE}.tcz > ${PACKAGE}.tcz.md5.txt"
+
+# Cleanup temp directory
+sudo rm -r -f usr
