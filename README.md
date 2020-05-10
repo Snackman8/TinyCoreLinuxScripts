@@ -18,8 +18,12 @@ wget https://raw.githubusercontent.com/Snackman8/TinyCoreLinuxScripts/master/tc_
 chmod +x ./tc_install_openssh.sh
 wget https://raw.githubusercontent.com/Snackman8/TinyCoreLinuxScripts/master/tc_install_openvpn_proxy.sh
 chmod +x ./tc_install_openvpn_proxy.sh
+wget https://raw.githubusercontent.com/Snackman8/TinyCoreLinuxScripts/master/tc_install_samba.sh
+chmod +x ./tc_install_samba.sh
 wget https://raw.githubusercontent.com/Snackman8/TinyCoreLinuxScripts/master/tc_install_wifi.sh
-chmod +x ./tc_install_openvpn_proxy.sh
+chmod +x ./tc_install_wifi.sh
+wget https://raw.githubusercontent.com/Snackman8/TinyCoreLinuxScripts/master/tc_change_hostname.sh
+chmod +x ./tc_change_hostname.sh
 
 # run the openssh script, change PASSWD to whatever password you want the tc user to have
 ./tc_install_openssh.sh PASSWD
@@ -29,3 +33,9 @@ chmod +x ./tc_install_openvpn_proxy.sh
 
 # run the wifi script, change SSID to the SSID of the wifi network you want to connect to, change PASSWORD to the password of that network
 ./tc_install_wifi.sh SSID PASSWORD
+
+# run the samba script, change SAMBA_PASSWORD to the samba password you want to assign for user tc
+./tc_install_samba.sh SAMBA_PASSWORD
+
+# run the change hostname script, change HOSTNAME to be the new hostname for the machine
+./tc_change_hostname.sh HOSTNAME
